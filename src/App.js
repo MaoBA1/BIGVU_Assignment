@@ -2,30 +2,28 @@ import './App.css';
 import { useEffect } from 'react';
 
 function App() {
-  const fetchApi = async() => {
-    try{ 
-      const response = await fetch("https://interviews.bigvu.tv/course/list", {
+  const baseurl = "https://interviews.bigvu.tv/course/list";
+  async function fetchData(url) {
+    const response = await fetch(`https://cors-anywhere.herokuapp.com/${url}`, {
         method:"GET",
-        // mode:"no-cors",
         headers: {
-          // 'Content-Type':'application/json',
-          // 'Access-Control-Allow-Origin':'*',
-          // 'Access-Control-Allow-Methods':'GET,POST,OPTIONS,DELETE,PUT',
-          'Authorization': `Basic' + ${btoa("bigvu" + ":" + "interview")}`,  
-        },
-        
-      });
-      // const data = await response.json();
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-    }
+          'Content-Type':'application/json',
+          'Authorization': 'Basic ' + btoa('bigvu' + ':' + 'interview'), 
+        }
+    });
+    const data = await response.json();
+    console.log(data);
+  };
+
+  
+  
+
     
 
     
-  }
+  
   useEffect(() =>  {
-    fetchApi();
+    fetchData(baseurl);
   }, []);
   return (
     <div className="App">
