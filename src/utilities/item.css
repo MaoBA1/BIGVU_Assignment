@@ -35,7 +35,6 @@
 .chapters-container-browser{
     display: flex;
     flex-direction: column;
-    width: 700px;
     height: 400px;
 }
 

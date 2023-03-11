@@ -6,7 +6,7 @@ import Colors from '../utilities/Colors';
 import { getCurrentTime, getFormattedTimeStampOrDuraiton, saveVideoTimeStempInLocalstorage } from '../mediaPlayer/controllers';
 import { isBrowser } from 'react-device-detect';
 import Scrollbars from 'react-custom-scrollbars-2';
-
+const { width } = window.screen;
 function Item() {
     const params = useParams();
     const { id } = params;
@@ -63,11 +63,13 @@ function Item() {
                             autoPlay={true}
                             muted
                             style={{
-                                width: !isBrowser ? "350px" : "900px",
+                                width: !isBrowser ? "350px" : `${width * (50/100)}px`,
                             }}
                         />
                         <div  style={{ margin:"10px" }}/>
-                        <div className={ isBrowser ? 'chapters-container-browser' : "chapters-container-mobile"}>
+                        <div className={ isBrowser ? 'chapters-container-browser' : "chapters-container-mobile"}
+                            style={{ width: isBrowser &&  `${width * (35/100)}px`}}
+                        >
                             <label style={{
                                 fontFamily:"Bold",
                                 fontSize:"20px",
