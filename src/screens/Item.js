@@ -63,7 +63,7 @@ function Item() {
                             autoPlay={true}
                             muted
                             style={{
-                                width: !isBrowser ? "350px" : "1100px",
+                                width: !isBrowser ? "350px" : "900px",
                             }}
                         />
                         <div  style={{ margin:"10px" }}/>

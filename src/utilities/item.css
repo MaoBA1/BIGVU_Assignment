@@ -11,12 +11,11 @@
 
 
 .body-container-browser {
-    width: 100%;
+    width: 85%;
+    margin: auto;
     display: grid;
-    grid-template-columns: auto auto auto auto;
-    padding-left: 20px;
-    
-    /* justify-content: space-around; */
+    grid-template-columns:auto auto auto;
+    justify-content: space-around;
     position: relative;
     
 }
