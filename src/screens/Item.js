@@ -51,19 +51,8 @@ function Item() {
         if(!itemData) {
             initiateComponent();
         }
-
-        if(chapters?.filter(chapter => chapter?.watched)?.length === chapters?.length) {
-            let completedCourse = localStorage.getItem("completedCourse");
-            if(completedCourse) {
-                console.log(completedCourse);
-                completedCourse = JSON.parse(completedCourse);
-                localStorage.setItem("completedCourse", JSON.stringify([ {id: id} ]));
-            } else {
-                completedCourse?.push({id: id})
-                localStorage.setItem("completedCourse", JSON.stringify(completedCourse));
-            }
-        }
-    }, [initiateComponent, itemData, chapters, id])
+        
+    }, [initiateComponent, itemData])
 
     const handelPicChapter = (item, index) => {
         if(index === chapterIndex) {
@@ -115,6 +104,18 @@ function Item() {
                                     let formattedChapters = chapters;
                                     formattedChapters[chapterIndex].watched = true;
                                     setChapters(formattedChapters);
+                                }
+
+                                if(chapters?.filter(chapter => chapter?.watched)?.length === chapters?.length) {
+                                    let completedCourse = localStorage.getItem("completedCourse");
+                                    if(completedCourse) {
+                                        console.log(completedCourse);
+                                        completedCourse = JSON.parse(completedCourse);
+                                        localStorage.setItem("completedCourse", JSON.stringify([ {id: id} ]));
+                                    } else {
+                                        completedCourse?.push({id: id})
+                                        localStorage.setItem("completedCourse", JSON.stringify(completedCourse));
+                                    }
                                 }
                             }}
                             onLoadedData={(event) => {
