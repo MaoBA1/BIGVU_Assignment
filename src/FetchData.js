@@ -8,7 +8,6 @@ export default async function fetchData(url) {
         }
     });
     const data = await response.json();
-    console.log(data);
     return data;
 };
 

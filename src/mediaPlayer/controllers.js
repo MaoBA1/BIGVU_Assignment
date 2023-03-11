@@ -10,14 +10,16 @@ export const saveVideoTimeStempInLocalstorage = (time, chapterId) => {
     let chaptersHistory = localStorage.getItem("chaptersHistory");
     chaptersHistory = chaptersHistory ? JSON.parse(chaptersHistory) : null;
     if(chaptersHistory) {
-         let chapterIndex = chaptersHistory.findIndex(chapter => chapter.chapterId === chapterId);
-         if(chapterIndex != -1) {
+        let chapterIndex = chaptersHistory.findIndex(chapter => chapter.chapterId === chapterId);
+         if(chapterIndex !== -1) {
             chaptersHistory[chapterIndex].timeStamp = time;
+            chaptersHistory[chapterIndex].watched = !chaptersHistory[chapterIndex].watched && time >= 10 ? time >= 10 : chaptersHistory[chapterIndex].watched ;
             localStorage.setItem("chaptersHistory", JSON.stringify(chaptersHistory));
          } else {
             chaptersHistory.push({
                 chapterId: chapterId,
-                timeStamp: time
+                timeStamp: time,
+                watched: false
             })
             localStorage.setItem("chaptersHistory", JSON.stringify(chaptersHistory));
          }
@@ -25,7 +27,8 @@ export const saveVideoTimeStempInLocalstorage = (time, chapterId) => {
         localStorage.setItem("chaptersHistory", JSON.stringify([
             {
                 chapterId: chapterId,
-                timeStamp: time
+                timeStamp: time,
+                watched: false
             }
         ]));
     }
@@ -36,9 +39,28 @@ export const getCurrentTime = (chapterId) => {
     chaptersHistory = chaptersHistory ? JSON.parse(chaptersHistory) : null;
     if(chaptersHistory) {
         let chapterIndex = chaptersHistory.findIndex(chapter => chapter.chapterId === chapterId);
-        if(chapterIndex != -1) {
+        if(chapterIndex !== -1) {
            return chaptersHistory[chapterIndex].timeStamp;
         } 
    }
+}
 
+
+export const reorderChaptersBylocalStorageData = (chapters, setChapters) => {
+    let chaptersHistory = localStorage.getItem("chaptersHistory");
+    chaptersHistory = chaptersHistory ? JSON.parse(chaptersHistory) : null;
+    if(chaptersHistory) {
+        chapters.map((chapter) => {
+            let index = chaptersHistory.findIndex(c => c.chapterId === chapter.id);
+            chapter.watched = chaptersHistory[index]?.watched || false;
+            return chapter
+        })
+        setChapters(chapters);
+    } else {
+        chapters.map(chapter => {
+            chapter.watched = false;
+            return chapter;
+        })
+        setChapters(chapters);
+    }
 }

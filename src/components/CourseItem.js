@@ -20,7 +20,11 @@ function CourseItem({ color, data }) {
     if(!extraData) {
         initiateComponent();
     }
-    
+    const isCourseComplete = () => {
+        
+    }
+
+    isCourseComplete()
     return (  
         <>
             {

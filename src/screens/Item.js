@@ -1,12 +1,18 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import '../utilities/item.css';
 import fetchData from '../FetchData';
 import Colors from '../utilities/Colors';
-import { getCurrentTime, getFormattedTimeStampOrDuraiton, saveVideoTimeStempInLocalstorage } from '../mediaPlayer/controllers';
+import { getCurrentTime, getFormattedTimeStampOrDuraiton, reorderChaptersBylocalStorageData, saveVideoTimeStempInLocalstorage } from '../mediaPlayer/controllers';
 import { isBrowser } from 'react-device-detect';
 import Scrollbars from 'react-custom-scrollbars-2';
+import { TfiMedallAlt } from 'react-icons/tfi';
+import { AiOutlinePlayCircle, AiOutlinePauseCircle } from 'react-icons/ai';
+import { MdDone } from 'react-icons/md';
+
 const { width } = window.screen;
+
+
 function Item() {
     const params = useParams();
     const { id } = params;
@@ -16,18 +22,22 @@ function Item() {
         width: window.innerWidth,
         height: window.innerHeight
     });
-    const chapters = itemData?.chapters;
+    const [ chapters, setChapters ] = useState([]);
+    const [chapterIndex, setChapterIndex] = useState(0);
     const videoElement = useRef(null);
-    const [ muted, setMuted ] = useState(false);
+    const [ playing, setPlaying ] = useState(true);
+    
 
-
-    const initiateComponent = async () => {
+    const initiateComponent = useCallback(async () => {
         let data = await fetchData(Baseurl);
         if(data) {
+            let currentVideo = localStorage.getItem("currentVideo");
+            currentVideo = currentVideo ? JSON.parse(currentVideo) : null;
+            setChapterIndex(currentVideo?.index || 0);
+            reorderChaptersBylocalStorageData(data.chapters, setChapters);
             setItemData(data);
-            
         }
-    }
+    },[Baseurl])
     
     useEffect(() => {
         const handelResize = () => {
@@ -41,7 +51,42 @@ function Item() {
         if(!itemData) {
             initiateComponent();
         }
-    }, [])
+
+        if(chapters?.filter(chapter => chapter?.watched)?.length === chapters?.length) {
+            let completedCourse = localStorage.getItem("completedCourse");
+            completedCourse = completedCourse ? JSON.parse(completedCourse) : null;
+            if(completedCourse) {
+                localStorage.setItem("completedCourse", JSON.stringify([ {id: id} ]));
+            } else {
+                localStorage.setItem("completedCourse", completedCourse.pause({id: id}));
+            }
+        }
+    }, [initiateComponent, itemData, chapters, id])
+
+    const handelPicChapter = (item, index) => {
+        if(index === chapterIndex) {
+            if(playing) {
+                videoElement.current.pause();
+            } else {
+                videoElement.current.play();
+            }
+        } else {
+            videoElement.current.pause();
+            setChapterIndex(index);
+            localStorage.setItem("currentVideo", JSON.stringify({
+                id: item.id,
+                index: index
+            }))
+            videoElement.current.play()
+            .then(() => {
+                console.log("play");
+            })
+            .catch(error => {
+                // console.log(error.message);
+                // play when another video is loading
+            })
+        }
+    }
     return (  
         <div className= {isBrowser ? "item-container-browser" : "item-container-mobile"} style={{ height: windowSize.height }}>
             {
@@ -50,16 +95,34 @@ function Item() {
                     <div className={isBrowser ? 'body-container-browser' : "body-container-mobile"} >
                         <video
                             ref={videoElement}
-                            src={chapters[0]?.asset?.resource?.stream?.url}
+                            src={chapters[chapterIndex]?.asset?.resource?.stream?.url}
                             onTimeUpdate={(event) => {
-                                saveVideoTimeStempInLocalstorage(event.currentTarget.currentTime, id);
-                                console.log(videoElement.current.volume);
+                                saveVideoTimeStempInLocalstorage(event.currentTarget.currentTime, chapters[chapterIndex].id);
+                                if(!playing) {
+                                    setPlaying(true);
+                                }
+                                if(event.currentTarget.currentTime === chapters[chapterIndex]?.asset?.resource?.duration) {
+                                    setChapterIndex((chapterIndex + 1)  % chapters.length);
+                                    localStorage.setItem("currentVideo", JSON.stringify({
+                                        id: id,
+                                        index: (chapterIndex + 1)  % chapters.length
+                                    }))
+                                    
+                                }
+                                if(event.currentTarget.currentTime >=10) {
+                                    let formattedChapters = chapters;
+                                    formattedChapters[chapterIndex].watched = true;
+                                    setChapters(formattedChapters);
+                                }
                             }}
                             onLoadedData={(event) => {
-                                videoElement.current.currentTime = getCurrentTime(id);
+                                if(getCurrentTime(chapters[chapterIndex].id)) {
+                                    videoElement.current.currentTime = getCurrentTime(chapters[chapterIndex].id);
+                                }
                             }}
+                            onPause={() => setPlaying(false)}
                             controls
-                            poster={chapters[0]?.asset?.resource?.thumbnail?.url}
+                            poster={chapters[chapterIndex]?.asset?.resource?.thumbnail?.url}
                             autoPlay={true}
                             muted
                             style={{
@@ -70,13 +133,49 @@ function Item() {
                         <div className={ isBrowser ? 'chapters-container-browser' : "chapters-container-mobile"}
                             style={{ width: isBrowser &&  `${width * (35/100)}px`}}
                         >
-                            <label style={{
-                                fontFamily:"Bold",
-                                fontSize:"20px",
-                                color: Colors.blueBlack,
+                            <div style={{
+                                display:"flex",
+                                flexDirection:"row",
+                                alignItems:"center",
                             }}>
-                                {itemData.headline}
-                            </label>
+                                {
+                                    chapters?.filter(chapter => chapter?.watched)?.length === chapters?.length
+                                    &&
+                                    <MdDone
+                                        color={Colors.greenBold}
+                                        style={{
+                                            marginRight:"10px"
+                                        }}
+                                        size={"25px"}
+                                    />
+                                }
+                                <label style={{
+                                    fontFamily:"Bold",
+                                    fontSize:"20px",
+                                    color: Colors.blueBlack,
+                                }}>
+                                    {itemData.headline}
+                                </label>
+
+                                <div style={{
+                                    display:"flex",
+                                    flexDirection:"row",
+                                    marginLeft:"20px",
+                                    alignItems:"center"
+                                }}>
+                                    <TfiMedallAlt
+                                        color={Colors.blueBlack}
+                                    />
+                                    <label style={{
+                                        fontFamily:"Light",
+                                        fontSize:"14px",
+                                        marginLeft:"5px",
+                                        color: Colors.blueBlack
+                                    }}>
+                                        {chapterIndex + 1 + " / " + chapters.length}
+                                    </label>
+                                </div>        
+                            </div>
                             <Scrollbars style={{
                                 display:"flex",
                                 flexDirection:"column",
@@ -86,21 +185,63 @@ function Item() {
                             }}>
                                 {
                                     chapters?.map((item, index) => 
-                                        <div key={item.id} className='chapter-list-item'>
-                                            <div>
+                                        <div onClick={() => handelPicChapter(item, index)} key={item.id} className='chapter-list-item'>
+                                            <div style={{
+                                                display:"flex",
+                                                flexDirection:"row",
+                                                alignItems:"center"
+                                            }}>
+                                                {
+                                                    chapters[index].watched === false && (index !== chapterIndex)
+                                                    &&
+                                                    (
+                                                        <AiOutlinePlayCircle
+                                                            color={chapterIndex === index ? Colors.blueBlack : Colors.grey}
+                                                        />
+                                                    )
+                                                }
+                                                {
+                                                    chapterIndex === index &&
+                                                    (
+                                                        <>
+                                                        {
+                                                            playing ?
+                                                            (
+                                                                <AiOutlinePauseCircle
+                                                                    color={chapterIndex === index ? Colors.blueBlack : Colors.grey}
+                                                                />
+                                                            )
+                                                            :
+                                                            (
+                                                                <AiOutlinePlayCircle
+                                                                    color={chapterIndex === index ? Colors.blueBlack : Colors.grey}
+                                                                />
+                                                            )
+                                                        }
+                                                        </>
+                                                    )
+                                                }
+                                                {
+                                                    chapters[index].watched && chapterIndex !== index &&
+                                                    (
+                                                        <MdDone
+                                                            color={Colors.greenBold}
+                                                        />
+                                                    )
+                                                }
                                                 <label style={{
                                                     fontFamily:"Light",
                                                     fontSize: isBrowser ? "15px" : "13px",
-                                                    color: Colors.grey,
+                                                    color: chapterIndex === index ? Colors.blueBlack : Colors.grey,
+                                                    marginLeft:"5px"
                                                 }}>
                                                     {index + 1}.
                                                 </label>
                                                 <label style={{
                                                     fontFamily:"Light",
                                                     fontSize: isBrowser ? "15px" : "13px",
-                                                    color: Colors.grey,
+                                                    color: chapterIndex === index ? Colors.blueBlack : Colors.grey,
                                                     marginLeft:"5px",
-                                                    width:"7000px"
                                                 }}>
                                                     {isBrowser ? item?.title?.slice(0,50) : item?.title?.slice(0,40)}
                                                     {isBrowser && item?.title?.length > 50 && "...."}
@@ -110,7 +251,7 @@ function Item() {
                                             <label style={{
                                                 fontFamily:"Light",
                                                 fontSize: isBrowser ? "15px" : "13px",
-                                                color: Colors.grey,
+                                                color: chapterIndex === index ? Colors.blueBlack : Colors.grey,
                                             }}>
                                                 {getFormattedTimeStampOrDuraiton(item?.asset?.resource?.duration)}
                                             </label>
@@ -160,3 +301,44 @@ function Item() {
 }
 
 export default Item;
+
+
+
+// if(chapters[chapterIndex]?.asset?.resource?.duration === event.currentTarget.currentTime) {
+//     let courseLogArray = localStorage.getItem("courseLogArray");
+//     courseLogArray = courseLogArray ? JSON.parse(courseLogArray) : null;
+//     if(courseLogArray) {
+//         let index = courseLogArray.findIndex(chapter => chapter.id === id);
+//         if(index !== -1) {
+//             courseLogArray[index].currentChapterIndex = (chapterIndex + 1) % chapters?.length;
+//             localStorage.setItem("courseLogArray", JSON.stringify(courseLogArray));
+//             setChapterIndex(courseLogArray[index].currentChapterIndex);
+//         }
+//     }
+// }
+
+// if(event.currentTarget.currentTime > 10  && event.currentTarget.currentTime < 10.2) {
+//     let formattedChapters = chapters;
+//     formattedChapters[chapterIndex].watched = true;
+//     setChapters(formattedChapters);
+//     console.log(chapters[chapterIndex]);
+// }
+
+
+// let courseLogArray = localStorage.getItem("courseLogArray");
+//             courseLogArray = courseLogArray ? JSON.parse(courseLogArray) : null;
+//             if(courseLogArray) {
+//                 let index = courseLogArray.findIndex(chapter => chapter.id === id);
+//                 if(index !== -1) {
+//                     setChapterIndex(courseLogArray[index].currentChapterIndex);
+//                 } else {
+//                     courseLogArray.push({ id: id, currentChapterIndex: chapterIndex })
+//                 }
+                
+//             } else {
+//                 localStorage.setItem("courseLogArray", JSON.stringify([
+//                     { id: id,  currentChapterIndex: 0}
+//                 ]));
+//             }
+//             setItemData(data);
+//             reorderChaptersBylocalStorageData(data.chapters, setChapters);
