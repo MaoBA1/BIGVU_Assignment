@@ -12,9 +12,13 @@
 
 .body-container-browser {
     width: 100%;
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: repeat(2, 550px);
+    padding-left: 30px;
+    padding-right: 30px;
     justify-content: space-around;
+    position: relative;
+    
 }
 
 .body-container-mobile {
@@ -30,9 +34,9 @@
 
 
 .chapters-container-browser{
-    flex: 0.4;
     display: flex;
     flex-direction: column;
+    width: 550px;
 }
 
 .chapters-container-mobile{

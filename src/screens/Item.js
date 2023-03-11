@@ -63,8 +63,7 @@ function Item() {
                             autoPlay={true}
                             muted
                             style={{
-                                width: !isBrowser && "350px",
-                                flex: isBrowser && 0.5
+                                width: !isBrowser ? "350px" : "520px",
                             }}
                         />
                         <div className={ isBrowser ? 'chapters-container-browser' : "chapters-container-mobile"}>
@@ -98,6 +97,7 @@ function Item() {
                                                     fontSize: isBrowser ? "15px" : "13px",
                                                     color: Colors.grey,
                                                     marginLeft:"5px",
+                                                    width:"7000px"
                                                 }}>
                                                     {isBrowser ? item?.title?.slice(0,50) : item?.title?.slice(0,40)}
                                                     {isBrowser && item?.title?.length > 50 && "...."}
