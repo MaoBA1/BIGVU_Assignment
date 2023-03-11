@@ -1,28 +1,18 @@
-import './App.css';
-import { useEffect } from 'react';
+import './utilities/fonts.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+
+// Screens
+import Home from './screens/Home';
+import Item from './screens/Item';
 
 function App() {
-  const baseurl = "https://interviews.bigvu.tv/course/list";
-  async function fetchData(url) {
-    const response = await fetch(`https://cors-anywhere.herokuapp.com/${url}`, {
-        method:"GET",
-        headers: {
-          'Content-Type':'application/json',
-          // eslint-disable-next-line
-          'Authorization': 'Basic ' + btoa('bigvu' + ':' + 'interview'), 
-        }
-    });
-    const data = await response.json();
-    console.log(data);
-  };
-  
-  useEffect(() =>  {
-    fetchData(baseurl);
-  }, []);
   return (
-    <div className="App">
-      
-    </div>
+    <Router>
+        <Routes>
+          <Route path="/" element={<Home/>}/>
+          <Route path="/courseitem/:id" element={<Item/>}/>
+        </Routes>
+      </Router>
   );
 }
 

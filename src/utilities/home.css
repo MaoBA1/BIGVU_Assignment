@@ -1,0 +1,49 @@
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.head-container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.body-container {
+    padding: 20px;
+}
+
+.loading-container {
+    flex:1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.animation {
+    animation-name: animation-div;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes animation-div {
+    0%{width: 0%;}
+    50%{width: 100%;}
+    100%{width: 0%;}
+    
+}
+
+.placholder {
+    animation-name: placholder;
+    animation-duration: 1s;
+    background-color: #7C869B;
+    opacity: 0.8;
+    animation-iteration-count: infinite;
+}
+
+@keyframes placholder {
+    50%{background-color: #6e7583; opacity: 1;}
+    100%{background-color: #7C869B; opacity: 0.8;}
+    
+}

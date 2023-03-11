@@ -1,0 +1,28 @@
+@font-face {
+    font-family: 'Bold';
+    src: url('../fonts/Inter-Bold.woff') format('woff');
+}
+@font-face {
+    font-family: 'Regular';
+    src: url('../fonts/Inter-Bold.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'SemiBold';
+    src: url('../fonts/Inter-SemiBold.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'ExtraBold';
+    src: url('../fonts/Inter-ExtraBold.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'SemiBold';
+    src: url('../fonts/Inter-SemiBold.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Light';
+    src: url('../fonts/Inter-Light.woff') format('woff');
+}

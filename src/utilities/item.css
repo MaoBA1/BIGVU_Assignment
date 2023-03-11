@@ -1,0 +1,53 @@
+.item-container-browser {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.item-container-mobile {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.body-container-browser {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.body-container-mobile {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    justify-content: space-around;
+    padding-bottom: 50px;
+}
+
+
+
+.chapters-container-browser{
+    flex: 0.4;
+    display: flex;
+    flex-direction: column;
+}
+
+.chapters-container-mobile{
+    height: 55%;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.chapter-list-item {
+    display: flex;
+    flex-direction: row;
+    height: 30px;
+    align-items: center;
+    padding: 8px;
+    justify-content: space-between;
+}
