@@ -13,10 +13,10 @@
 .body-container-browser {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(2, 550px);
-    padding-left: 30px;
-    padding-right: 30px;
-    justify-content: space-around;
+    grid-template-columns: auto auto auto auto;
+    padding-left: 20px;
+    
+    /* justify-content: space-around; */
     position: relative;
     
 }
@@ -36,7 +36,8 @@
 .chapters-container-browser{
     display: flex;
     flex-direction: column;
-    width: 550px;
+    width: 700px;
+    height: 400px;
 }
 
 .chapters-container-mobile{

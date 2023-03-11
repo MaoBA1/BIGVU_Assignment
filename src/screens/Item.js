@@ -63,9 +63,10 @@ function Item() {
                             autoPlay={true}
                             muted
                             style={{
-                                width: !isBrowser ? "350px" : "520px",
+                                width: !isBrowser ? "350px" : "1100px",
                             }}
                         />
+                        <div  style={{ margin:"10px" }}/>
                         <div className={ isBrowser ? 'chapters-container-browser' : "chapters-container-mobile"}>
                             <label style={{
                                 fontFamily:"Bold",
