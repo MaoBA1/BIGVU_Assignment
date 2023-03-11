@@ -4,8 +4,9 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 // Screens
 import Home from './screens/Home';
 import Item from './screens/Item';
-localStorage.removeItem("currentVideo");
-localStorage.removeItem("chaptersHistory");
+// localStorage.removeItem("currentVideo");
+// localStorage.removeItem("chaptersHistory");
+// localStorage.removeItem("completedCourse");
 function App() {
   return (
     <Router>

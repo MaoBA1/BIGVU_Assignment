@@ -54,11 +54,13 @@ function Item() {
 
         if(chapters?.filter(chapter => chapter?.watched)?.length === chapters?.length) {
             let completedCourse = localStorage.getItem("completedCourse");
-            completedCourse = completedCourse ? JSON.parse(completedCourse) : null;
             if(completedCourse) {
+                console.log(completedCourse);
+                completedCourse = JSON.parse(completedCourse);
                 localStorage.setItem("completedCourse", JSON.stringify([ {id: id} ]));
             } else {
-                localStorage.setItem("completedCourse", completedCourse.pause({id: id}));
+                completedCourse?.push({id: id})
+                localStorage.setItem("completedCourse", JSON.stringify(completedCourse));
             }
         }
     }, [initiateComponent, itemData, chapters, id])
@@ -66,18 +68,18 @@ function Item() {
     const handelPicChapter = (item, index) => {
         if(index === chapterIndex) {
             if(playing) {
-                videoElement.current.pause();
+                videoElement?.current?.pause();
             } else {
-                videoElement.current.play();
+                videoElement?.current?.play();
             }
         } else {
-            videoElement.current.pause();
+            videoElement?.current?.pause();
             setChapterIndex(index);
             localStorage.setItem("currentVideo", JSON.stringify({
                 id: item.id,
                 index: index
             }))
-            videoElement.current.play()
+            videoElement?.current?.play()
             .then(() => {
                 console.log("play");
             })
@@ -124,6 +126,7 @@ function Item() {
                             controls
                             poster={chapters[chapterIndex]?.asset?.resource?.thumbnail?.url}
                             autoPlay={true}
+                            playsInline
                             muted
                             style={{
                                 width: !isBrowser ? "350px" : `${width * (50/100)}px`,

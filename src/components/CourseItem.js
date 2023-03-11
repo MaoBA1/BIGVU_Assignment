@@ -5,6 +5,7 @@ import { isBrowser } from 'react-device-detect';
 import { HiVideoCamera } from 'react-icons/hi'
 import { IoIosArrowForward } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
+import { MdDone } from 'react-icons/md';
 
 function CourseItem({ color, data }) {
     const navigate = useNavigate();
@@ -20,26 +21,62 @@ function CourseItem({ color, data }) {
     if(!extraData) {
         initiateComponent();
     }
+    
     const isCourseComplete = () => {
-        
+        let completedCourse = localStorage.getItem("completedCourse");
+        completedCourse = completedCourse ? JSON.parse(completedCourse) : null;
+        if(completedCourse) {
+            return completedCourse.findIndex(course => course.id === extraData.id) !== -1;
+        }
+        return false;
     }
 
-    isCourseComplete()
+    
     return (  
         <>
             {
                 extraData ? 
                 (
                     <div style={{ margin:"20px" }}>
-                        <label style={{
-                            fontFamily:"Bold",
-                            background: color.background,
-                            WebkitBackgroundClip: "text",
-                            WebkitTextFillColor:"transparent",
-                            fontSize:"18px"
+                        <div style={{
+                            display:"flex",
+                            flexDirection:"row",
+                            alignItems:"center"
                         }}>
-                            {data.headline}
-                        </label>
+                            <label style={{
+                                fontFamily:"Bold",
+                                background: color.background,
+                                WebkitBackgroundClip: "text",
+                                WebkitTextFillColor:"transparent",
+                                fontSize:"18px"
+                            }}>
+                                {data.headline}
+                            </label>
+                            {
+                                isCourseComplete() &&
+                                <div style={{
+                                    display:"flex",
+                                    flexDirection:"row",
+                                    alignItems:"center",
+                                    marginLeft:"10px",
+                                    backgroundColor: Colors.grey,
+                                    padding:"2px",
+                                    paddingLeft:"5px",
+                                    paddingRight:"5px",
+                                    borderRadius:"5px"
+                                }}>
+                                    <MdDone color='#FFFFFF'/>
+                                    <label style={{
+                                        fontFamily:"Light",
+                                        color:"#FFFFFFFF",
+                                        fontSize:"14px",
+                                        marginLeft:"5px"
+                                    }}>
+                                        Completed
+                                    </label>
+                                </div>
+                            }
+                        </div>
 
                         <div onClick={() => { !isBrowser && navigate(`courseitem/${data.id}`) }} style={{
                             position:"relative",
