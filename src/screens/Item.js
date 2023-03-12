@@ -78,6 +78,7 @@ function Item() {
             })
         }
     }
+
     return (  
         <div className= {isBrowser ? "item-container-browser" : "item-container-mobile"} style={{ height: windowSize.height }}>
             {
@@ -88,28 +89,34 @@ function Item() {
                             ref={videoElement}
                             src={chapters[chapterIndex]?.asset?.resource?.stream?.url}
                             onTimeUpdate={(event) => {
+                                // save video time stamp in local storage
                                 saveVideoTimeStempInLocalstorage(event.currentTarget.currentTime, chapters[chapterIndex].id);
+
                                 if(!playing) {
                                     setPlaying(true);
                                 }
+
+                                // if chapter finished, swipe to next one in the list
                                 if(event.currentTarget.currentTime === chapters[chapterIndex]?.asset?.resource?.duration) {
                                     setChapterIndex((chapterIndex + 1)  % chapters.length);
                                     localStorage.setItem("currentVideo", JSON.stringify({
                                         id: id,
                                         index: (chapterIndex + 1)  % chapters.length
                                     }))
-                                    
+                                    videoElement.current.src = (chapterIndex + 1)  % chapters.length;
                                 }
+
+                                // if current chapter time stamp is bigger than 10 seconds, the chapter sign as watched
                                 if(event.currentTarget.currentTime >=10) {
                                     let formattedChapters = chapters;
                                     formattedChapters[chapterIndex].watched = true;
                                     setChapters(formattedChapters);
                                 }
 
+                                // If all chapters in the course have been viewed, the course is marked as fully viewed
                                 if(chapters?.filter(chapter => chapter?.watched)?.length === chapters?.length) {
                                     let completedCourse = localStorage.getItem("completedCourse");
                                     if(completedCourse) {
-                                        console.log(completedCourse);
                                         completedCourse = JSON.parse(completedCourse);
                                         localStorage.setItem("completedCourse", JSON.stringify([ {id: id} ]));
                                     } else {
@@ -119,6 +126,7 @@ function Item() {
                                 }
                             }}
                             onLoadedData={(event) => {
+                                // when the video is loaded the video time stamp is set to the record in local storage
                                 if(getCurrentTime(chapters[chapterIndex].id)) {
                                     videoElement.current.currentTime = getCurrentTime(chapters[chapterIndex].id);
                                 }
@@ -131,6 +139,8 @@ function Item() {
                             muted
                             style={{
                                 width: !isBrowser ? "350px" : `${width * (50/100)}px`,
+                                border: `1px solid ${Colors.grey}`,
+                                borderRadius:"10px"
                             }}
                         />
                         <div  style={{ margin:"10px" }}/>
@@ -171,12 +181,12 @@ function Item() {
                                         color={Colors.blueBlack}
                                     />
                                     <label style={{
-                                        fontFamily:"Light",
-                                        fontSize:"14px",
+                                        fontFamily:"Bold",
+                                        fontSize:"12px",
                                         marginLeft:"5px",
                                         color: Colors.blueBlack
                                     }}>
-                                        {chapterIndex + 1 + " / " + chapters.length}
+                                        {chapters?.filter(chapter => chapter?.watched)?.length + " / " + chapters.length}
                                     </label>
                                 </div>        
                             </div>
@@ -234,27 +244,27 @@ function Item() {
                                                     )
                                                 }
                                                 <label style={{
-                                                    fontFamily:"Light",
-                                                    fontSize: isBrowser ? "15px" : "13px",
+                                                    fontFamily:"Bold",
+                                                    fontSize: "13px",
                                                     color: chapterIndex === index ? Colors.blueBlack : Colors.grey,
                                                     marginLeft:"5px"
                                                 }}>
                                                     {index + 1}.
                                                 </label>
                                                 <label style={{
-                                                    fontFamily:"Light",
-                                                    fontSize: isBrowser ? "15px" : "13px",
+                                                    fontFamily:"Bold",
+                                                    fontSize: "13px",
                                                     color: chapterIndex === index ? Colors.blueBlack : Colors.grey,
                                                     marginLeft:"5px",
                                                 }}>
-                                                    {isBrowser ? item?.title?.slice(0,50) : item?.title?.slice(0,40)}
+                                                    {isBrowser ? item?.title?.slice(0,50) : item?.title?.slice(0,35)}
                                                     {isBrowser && item?.title?.length > 50 && "...."}
-                                                    {!isBrowser && item?.title?.length > 40 && "...."}
+                                                    {!isBrowser && item?.title?.length > 35 && "...."}
                                                 </label>
                                             </div>
                                             <label style={{
-                                                fontFamily:"Light",
-                                                fontSize: isBrowser ? "15px" : "13px",
+                                                fontFamily:"Bold",
+                                                fontSize: "13px",
                                                 color: chapterIndex === index ? Colors.blueBlack : Colors.grey,
                                             }}>
                                                 {getFormattedTimeStampOrDuraiton(item?.asset?.resource?.duration)}

@@ -176,7 +176,8 @@ function CourseItem({ color, data }) {
                                                 style={{
                                                     marginLeft:"5px",
                                                     fontFamily:"Light",
-                                                    fontSize:"13px"
+                                                    fontSize:"13px",
+                                                    color: Colors.blueBlack
                                                 }}
                                             >
                                                 {item}

@@ -6,11 +6,11 @@ import Colors from '../utilities/Colors';
 import blueVector from '../assets/blue vector.svg';
 import greenVector from '../assets/green vector.svg';
 import orangeVector from '../assets/orange vector.svg';
-
+import { isBrowser } from 'react-device-detect';
 
 // components
 import CourseItem from '../components/CourseItem';
-import { isBrowser } from 'react-device-detect';
+
 
 const Baseurl = "https://interviews.bigvu.tv/course/list";
 

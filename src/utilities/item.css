@@ -35,7 +35,7 @@
 .chapters-container-browser{
     display: flex;
     flex-direction: column;
-    height: 400px;
+    height: 350px;
 }
 
 .chapters-container-mobile{
@@ -52,4 +52,5 @@
     height: 30px;
     padding: 8px;
     justify-content: space-between;
+    align-items: center;
 }
