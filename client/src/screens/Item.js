@@ -92,18 +92,9 @@ function Item() {
                                 // save video time stamp in local storage
                                 saveVideoTimeStempInLocalstorage(event.currentTarget.currentTime, chapters[chapterIndex].id);
 
+                                
                                 if(!playing) {
                                     setPlaying(true);
-                                }
-
-                                // if chapter finished, swipe to next one in the list
-                                if(event.currentTarget.currentTime === chapters[chapterIndex]?.asset?.resource?.duration) {
-                                    setChapterIndex((chapterIndex + 1)  % chapters.length);
-                                    localStorage.setItem("currentVideo", JSON.stringify({
-                                        id: id,
-                                        index: (chapterIndex + 1)  % chapters.length
-                                    }))
-                                    videoElement.current.src = (chapterIndex + 1)  % chapters.length;
                                 }
 
                                 // if current chapter time stamp is bigger than 10 seconds, the chapter sign as watched
@@ -137,6 +128,14 @@ function Item() {
                             autoPlay={true}
                             playsInline
                             muted
+                            onEnded={() => {
+                                setChapterIndex((chapterIndex + 1)  % chapters.length);
+                                localStorage.setItem("currentVideo", JSON.stringify({
+                                    id: id,
+                                    index: (chapterIndex + 1)  % chapters.length
+                                }))
+                                videoElement.current.src = (chapterIndex + 1)  % chapters.length;
+                            }}
                             style={{
                                 width: !isBrowser ? "350px" : `${width * (50/100)}px`,
                                 border: `1px solid ${Colors.grey}`,
