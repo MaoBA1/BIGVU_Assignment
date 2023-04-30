@@ -16,7 +16,7 @@ const { width } = window.screen;
 function Item() {
     const params = useParams();
     const { id } = params;
-    const Baseurl = `https://interviews.bigvu.tv/course/${id}`;
+    const Baseurl = `/course/${id}`;
     const [ itemData, setItemData ] = useState(null);
     const [ windowSize, setWindowSize ] = useState({
         width: window.innerWidth,

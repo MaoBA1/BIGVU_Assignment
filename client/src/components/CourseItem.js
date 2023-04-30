@@ -10,7 +10,7 @@ import { MdDone } from 'react-icons/md';
 function CourseItem({ color, data }) {
     const navigate = useNavigate();
     const [extraData, setExtraData] = useState(null);
-    const Baseurl = `https://interviews.bigvu.tv/course/${data.id}`;
+    const Baseurl = `/course/${data.id}`;
     const initiateComponent = async () => {
         let data = await fetchData(Baseurl);
         if(data) {

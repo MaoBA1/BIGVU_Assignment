@@ -1,5 +1,5 @@
 export default async function fetchData(url) {
-    const response = await fetch(`https://cors-anywhere.herokuapp.com/${url}`, {
+    const response = await fetch(`${url}`, {
         method:"GET",
         headers: {
             // 'Content-Type':'application/json',
@@ -11,3 +11,5 @@ export default async function fetchData(url) {
     return data;
 };
 
+
+//https://cors-anywhere.herokuapp.com/

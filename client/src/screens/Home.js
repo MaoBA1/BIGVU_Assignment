@@ -12,7 +12,7 @@ import { isBrowser } from 'react-device-detect';
 import CourseItem from '../components/CourseItem';
 
 
-const Baseurl = "https://interviews.bigvu.tv/course/list";
+const Baseurl = "/course/list";
 
 function Home(props) {
     const [ windowSize, setWindowSize ] = useState({
